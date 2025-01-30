@@ -1,25 +1,23 @@
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
+import pandas as pd
 from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-# Step 1: Load the Iris dataset
-iris = load_iris()
-X, y = iris.data, iris.target  # Features and labels
+# Load dataset from CSV file
+# Replace 'your_dataset.csv' with the path to your CSV file
+df = pd.read_csv('your_dataset.csv')
 
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+# Assuming the last column is the target variable and the rest are features
+X = df.iloc[:, :-1]  # Features (all columns except the last one)
+y = df.iloc[:, -1]   # Target (the last column)
 
-# Step 2: Train the SVM classifier
-svm = SVC(kernel='linear')  # Using a linear kernel
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create SVM classifier
+svm = SVC(kernel='linear')
 svm.fit(X_train, y_train)
 
-# Step 3: Prediction on the test data
+# Evaluate
 y_pred = svm.predict(X_test)
-
-# Step 4: Evaluate the accuracy of the model
-accuracy = accuracy_score(y_test, y_pred)
-
-print("Predicted labels:", y_pred)
-print("Actual labels:", y_test)
-print("Model Accuracy:", accuracy)
+print("Accuracy:", accuracy_score(y_test, y_pred))
