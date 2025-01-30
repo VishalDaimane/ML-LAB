@@ -1,12 +1,12 @@
-from sklearn.datasets import fetch_california_housing
 from sklearn.linear_model import SGDRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 import pandas as pd
+import matplotlib.pyplot as plt
 
-# 1. Import dataset
-data = fetch_california_housing(as_frame=True)
-df = data.frame
+# 1. Import dataset from CSV file
+csv_path = "path/to/your/csv/file.csv"  # Replace with the path to your CSV file
+df = pd.read_csv(csv_path)
 
 # 2. Display first 5 rows
 print(df.head())
@@ -14,8 +14,9 @@ print(df.head())
 # 3. Check for null values
 print(df.isnull().sum())
 
-# 4. Visualize data
+# 4. Visualize data (assuming 'MedInc' and 'MedHouseVal' are columns in your CSV)
 df.plot.scatter(x='MedInc', y='MedHouseVal')
+plt.show()
 
 # 5. Covariance and correlation
 print("Covariance:\n", df.cov())
