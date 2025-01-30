@@ -3,14 +3,13 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
-# Step 1: Import dataset
-data = fetch_california_housing(as_frame=True)
-df = data.frame
+# Step 1: Import dataset from CSV file
+csv_path = "path/to/your/csv/file.csv"  # Replace with the path to your CSV file
+df = pd.read_csv(csv_path)
 
 # Step 2: Display first 5 rows
 print("First 5 rows of the dataset:")
