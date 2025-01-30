@@ -10,8 +10,8 @@ file_path = "your_file.csv"  # Change this to your actual CSV file path
 data = pd.read_csv(file_path)
 
 # Assuming the last column is the target variable
-y = data.iloc[:, -1]  # Target variable
 X = data.iloc[:, :-1]  # Features
+y = data.iloc[:, -1]  # Target variable
 
 # Display the first 5 rows of the features and target
 print("Features:\n", X.head())
