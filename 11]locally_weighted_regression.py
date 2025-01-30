@@ -1,38 +1,27 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Generate synthetic data
-np.random.seed(0)
-X = np.linspace(1, 10, 100)  # 100 data points between 1 and 10
-y = 2 * np.sin(X) + np.log(X) + np.random.normal(0, 0.2, 100)  # Non-linear data
+# Define dataset
+X = np.linspace(-3, 3, 100)
+y = np.sin(X) + np.random.normal(0, 0.1, len(X))
 
-# Locally Weighted Regression function
-def locally_weighted_regression(X, y, query_point, c):
-    m = len(X)
-    X_bias = np.c_[np.ones(m), X]  # Add bias term to X
-    query_bias = np.array([1, query_point])  # Bias for the query point
-    
-    # Calculate weights
-    weights = np.exp(-((X - query_point) ** 2) / (2 * c ** 2))
-    W = np.diag(weights)  # Create diagonal weight matrix
-    
-    # Compute beta
-    beta = np.linalg.pinv(X_bias.T @ W @ X_bias) @ (X_bias.T @ W @ y)
-    
-    # Predict Y for the query point
-    prediction = query_bias @ beta
-    return prediction
+# Locally Weighted Regression
+def kernel(x, xi, tau):
+    return np.exp(-np.sum((x - xi) ** 2) / (2 * tau ** 2))
 
-# Predict over the data range
-c = 0.8  # Bandwidth parameter
-y_pred = np.array([locally_weighted_regression(X, y, x, c) for x in X])
+def predict(X_train, y_train, x0, tau):
+    weights = np.array([kernel(x0, xi, tau) for xi in X_train])
+    W = np.diag(weights)
+    theta = np.linalg.inv(X_train.T @ W @ X_train) @ X_train.T @ W @ y_train
+    return x0 @ theta
 
-# Plot original data and LWR fit
-plt.scatter(X, y, color='blue', label='Original Data', alpha=0.6)
-plt.plot(X, y_pred, color='red', label='LWR Fit', linewidth=2)
-plt.title("Locally Weighted Regression")
-plt.xlabel("X")
-plt.ylabel("y")
+# Fit the model
+tau = 0.5
+X_poly = np.vstack([np.ones_like(X), X]).T
+y_pred = np.array([predict(X_poly, y, np.array([1, x]), tau) for x in X])
+
+# Plot
+plt.scatter(X, y, label="Data")
+plt.plot(X, y_pred, color="red", label="LWR")
 plt.legend()
 plt.show()
