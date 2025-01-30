@@ -1,52 +1,64 @@
+# Importing libraries
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.datasets import fetch_california_housing
 
-# Load California housing dataset
-housing = fetch_california_housing(as_frame=True)
-housing_df = housing.frame
+# Step 1: Import dataset
+data = fetch_california_housing(as_frame=True)
+df = data.frame
 
-# Display first 5 rows
-print(housing_df.head())
+# Step 2: Display first 5 rows
+print("First 5 rows of the dataset:")
+print(df.head())
 
-# Check for null values
-print("\nNull values:\n", housing_df.isnull().sum())
+# Step 3: Check the number of samples (not relevant for regression, skipped)
 
-# Visualize data
-sns.pairplot(housing_df[['MedInc', 'HouseAge', 'AveRooms', 'AveOccup', 'MedHouseVal']])
+# Step 4: Check for null values
+print("\nNull values in the dataset:")
+print(df.isnull().sum())
+
+# Step 5: Visualize the data in the form of graphs
+sns.pairplot(df.sample(500))  # Use a sample for visualization
 plt.show()
-plt.figure(figsize=(12, 8))
-sns.heatmap(housing_df.corr(), annot=True, cmap="coolwarm")
+
+# Visualizing distribution of the target variable
+sns.histplot(df['MedHouseVal'], kde=True, bins=30)
+plt.title("Distribution of Target Variable (MedHouseVal)")
 plt.show()
 
-# Split data
-X = housing_df.drop(columns=['MedHouseVal'])
-y = housing_df['MedHouseVal']
+# Step 6: Obtain covariance and correlation values
+cov_matrix = df.cov()
+correlation_matrix = df.corr()
+
+print("\nCovariance Matrix (partial):")
+print(cov_matrix.head())
+print("\nCorrelation Matrix (partial):")
+print(correlation_matrix.head())
+
+# Heatmap of the correlation matrix
+sns.heatmap(correlation_matrix, annot=True, fmt='.2f', cmap='coolwarm')
+plt.title("Correlation Matrix Heatmap")
+plt.show()
+
+# Step 7: Train and test model
+X = df.drop(columns='MedHouseVal')  # Features
+y = df['MedHouseVal']  # Target
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train model
+# Step 8: Apply regression model
 model = LinearRegression()
 model.fit(X_train, y_train)
 
-
-# Predict and evaluate
+# Step 9: Predict and evaluate accuracy
 y_pred = model.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 
-print("\nMSE:", mse)
-print("R^2 (Accuracy):", r2)
-print(f"Accuracy: {r2 * 100:.2f}%")
-
-
-# Actual vs Predicted
-plt.scatter(y_test, y_pred, alpha=0.7)
-plt.xlabel("Actual Prices")
-plt.ylabel("Predicted Prices")
-plt.title("Actual vs Predicted Prices")
-plt.show()
+print(f"\nMean Squared Error: {mse:.2f}")
+print(f"R² Score: {r2:.2f}")
